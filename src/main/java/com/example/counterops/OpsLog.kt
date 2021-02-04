@@ -1,25 +1,21 @@
 package com.example.counterops
 
-import androidx.lifecycle.MutableLiveData
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.PrimaryKey
-import androidx.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 @Entity
 data class OpsLogEntry(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val amount: Int
+    val id: Int = 0,
+    val timestamp: Long,
+    val amount: Int,
+    val note: String
     )
 
+@Dao
 interface OpsLogDAO {
     @Insert
     fun insert(entry: OpsLogEntry)
-    @Query("select * from OpsLogEntry where id == :key")
-    fun get(key: Int)
     @Query("select * from OpsLogEntry")
-    fun getAll(): MutableLiveData<List<OpsLogEntry>>
-    @Query("select sum(amount) from OpsLogEntry")
-    fun getSum(): MutableLiveData<Int>
+    fun getAll(): LiveData<List<OpsLogEntry>>
 }

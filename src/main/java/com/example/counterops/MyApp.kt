@@ -2,13 +2,16 @@ package com.example.counterops
 
 import android.app.Application
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import android.util.Log
 
 class MyApp: Application() {
-    private val applicationScope = CoroutineScope(Dispatchers.Default)
-
     companion object {
         lateinit var appContext: Context
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d("QQQ", "MyApp onCreate()")
+        appContext = applicationContext
     }
 }
