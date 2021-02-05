@@ -43,6 +43,5 @@ class MainActivity : AppCompatActivity() {
 }
 
 class MainActivityViewModel: ViewModel() {
-    val balance = Transformations.map(OpsLogRepository.log)
-        { it.map { it.amount }.sum() }
+    val balance = Transformations.map(OpsLogRepository.log) { it.map { it.amount }.sum() }
 }
