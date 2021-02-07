@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
+import androidx.lifecycle.*
 import com.example.counterops.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
@@ -25,11 +23,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonUp.setOnClickListener {
             Log.d("QQQ", "buttonUp onclick")
-            OpsLogRepository.newOpsLogEntry(5)
+            viewModel.insertOpsLogEntry(5)
         }
         binding.buttonDown.setOnClickListener {
             Log.d("QQQ", "buttonDown onclick")
-            OpsLogRepository.newOpsLogEntry(-5)
+            viewModel.insertOpsLogEntry(-5)
         }
         binding.buttonUp.setOnLongClickListener {
             startActivity(Intent(this, FeedbackNoteActivity::class.java))
@@ -44,4 +42,11 @@ class MainActivity : AppCompatActivity() {
 
 class MainActivityViewModel: ViewModel() {
     val balance = Transformations.map(OpsLogRepository.log) { it.map { it.amount }.sum() }
+    fun insertOpsLogEntry(amount: Int) {
+        viewModelScope.launch {
+            OpsDatabase.getInstance().opsLogDAO.insert(
+                OpsLogEntry(timestamp = System.currentTimeMillis(), amount = amount, note = "")
+            )
+        }
+    }
 }

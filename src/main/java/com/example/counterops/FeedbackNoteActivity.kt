@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.viewModelScope
 import com.example.counterops.databinding.ActivityFeedbackNoteBinding
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FeedbackNoteActivity : AppCompatActivity() {
@@ -26,15 +24,9 @@ class FeedbackNoteActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
             val noteText = binding.editTextTextPersonName.text.toString()
             val amount: Int = binding.seekBar.progress
-            viewModel.viewModelScope.launch(Dispatchers.IO, CoroutineStart.DEFAULT) {
-                OpsDatabase.getInstance().opsLogDAO.insert(
-                    OpsLogEntry(timestamp = System.currentTimeMillis(), amount = amount, note = noteText)
-                )
-                runOnUiThread {
-                    binding.editTextTextPersonName.text.clear()
-                    binding.seekBar.progress = binding.seekBar.min
-                }
-            }
+            viewModel.insertOpsLogEntry(amount, noteText)
+            binding.editTextTextPersonName.text.clear()
+            binding.seekBar.progress = binding.seekBar.min
         }
         binding.seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -50,4 +42,12 @@ class FeedbackNoteActivity : AppCompatActivity() {
     }
 }
 
-class FeedbackNoteActivityViewModel: ViewModel()
+class FeedbackNoteActivityViewModel: ViewModel() {
+    fun insertOpsLogEntry(amount: Int, note: String) {
+        viewModelScope.launch {
+            OpsDatabase.getInstance().opsLogDAO.insert(
+                OpsLogEntry(timestamp = System.currentTimeMillis(), amount = amount, note = note)
+            )
+        }
+    }
+}

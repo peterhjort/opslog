@@ -15,7 +15,9 @@ data class OpsLogEntry(
 @Dao
 interface OpsLogDAO {
     @Insert
-    fun insert(entry: OpsLogEntry)
+    suspend fun insert(entry: OpsLogEntry)
     @Query("select * from OpsLogEntry")
     fun getAll(): LiveData<List<OpsLogEntry>>
+    @Query("select * from OpsLogEntry where timestamp > :timestamp")
+    fun getAllSince(timestamp: Long): LiveData<List<OpsLogEntry>>
 }
