@@ -41,12 +41,12 @@ class MainActivity : AppCompatActivity() {
 }
 
 class MainActivityViewModel: ViewModel() {
-    val balance = Transformations.map(OpsLogRepository.log) { it.map { it.amount }.sum() }
+    private val repository = OpsLogRepository
+    val balance = Transformations.map(repository.logData) { it.map { it.amount }.sum() }
+
     fun insertOpsLogEntry(amount: Int) {
         viewModelScope.launch {
-            OpsDatabase.getInstance().opsLogDAO.insert(
-                OpsLogEntry(timestamp = System.currentTimeMillis(), amount = amount, note = "")
-            )
+            repository.newOpsLogEntry(amount, "")
         }
     }
 }

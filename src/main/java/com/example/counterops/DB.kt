@@ -1,5 +1,6 @@
 package com.example.counterops
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -14,11 +15,8 @@ abstract class OpsDatabase: RoomDatabase() {
             synchronized(this) {
                 var instance = INSTANCE
                 if(instance == null) {
-                    instance = Room.databaseBuilder(
-                        MyApp.appContext,
-                        OpsDatabase::class.java,
-                        "ops_database"
-                    ).fallbackToDestructiveMigration().build()
+                    instance = Room.databaseBuilder(MyApp.appContext, OpsDatabase::class.java, "ops_database")
+                        .fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return instance

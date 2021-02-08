@@ -32,10 +32,8 @@ class FeedbackNoteActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.valueView.text = progress.toString()
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
@@ -43,11 +41,11 @@ class FeedbackNoteActivity : AppCompatActivity() {
 }
 
 class FeedbackNoteActivityViewModel: ViewModel() {
-    fun insertOpsLogEntry(amount: Int, note: String) {
+    private val repository = OpsLogRepository
+
+    fun insertOpsLogEntry(amount: Int, noteText: String) {
         viewModelScope.launch {
-            OpsDatabase.getInstance().opsLogDAO.insert(
-                OpsLogEntry(timestamp = System.currentTimeMillis(), amount = amount, note = note)
-            )
+            repository.newOpsLogEntry(amount, noteText)
         }
     }
 }
